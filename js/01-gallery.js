@@ -3,32 +3,8 @@ import { galleryItems } from "./gallery-items.js";
 
 console.log(galleryItems);
 const gallery = document.querySelector(".gallery");
-const galleryImages = createGalleryCards(galleryItems);
-
-gallery.insertAdjacentHTML("beforeend", galleryImages);
-gallery.addEventListener("click", onClick);
-
-function createGalleryCards(galleryItems) {
-  return galleryItems
-    .map(({ preview, original, descrition }) => {
-      return;
-      `<div class="gallery__item">
-          < a class="gallery__link" href = "${original}" >
-                <img
-                    class="gallery__image"
-                    src="${preview}"
-                    data-source="${original}"
-                    alt="${descrition}"
-                />
-          </a >
-      </div>`;
-    })
-    .join("");
-}
-
 const galleryList = createGalleryCard(galleryItems);
 gallery.insertAdjacentHTML("beforeend", galleryList);
-
 gallery.addEventListener("click", onClick);
 
 function createGalleryCard(cardItems) {
@@ -55,16 +31,21 @@ function onClick(event) {
   if (!event.target.classList.contains("gallery__image")) {
     return;
   }
-
   const instance = basicLightbox.create(
-    `<img src = "${event.target.dataset.source}" width="800" height="600">`
+    ` <div class="modal"> <img src="${event.target.dataset.source}" alt="Big Pictures"/> </div> `,
+    {
+      onShow: (instance) => {
+        gallery.addEventListener("keydown", onEscapeButton);
+      },
+      onClose: (instance) => {
+        gallery.removeEventListener("keydown", onEscapeButton);
+      },
+    }
   );
-
   instance.show();
-  gallery.addEventListener("keydown", (e) => {
-    if (e.code === "Escape") {
+  function onEscapeButton(evt) {
+    if (evt.key === "Escape") {
       instance.close();
     }
-    return gallery.removeEventListener;
-  });
+  }
 }
